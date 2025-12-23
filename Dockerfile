@@ -32,10 +32,9 @@ EXPOSE 9090 12345 8080 8545
 RUN echo '#!/bin/bash\n\
 set -e\n\
 mkdir -p /results/$API/$TOOL/$RUN/code-coverage\n\
-cp -r /api/specifications /results/$API/$TOOL/$RUN/\n\
 \n\
 echo "Starting Ganache..."\n\
-ganache --wallet.deterministic --wallet.totalAccounts 10 --wallet.defaultBalance 100 --chain.networkId 1337 --server.host 0.0.0.0 --server.port 8545 > /results/$API/$TOOL/$RUN/ganache.log 2>&1 &\n\
+ganache --wallet.deterministic --wallet.totalAccounts 10 --wallet.defaultBalance 100 --chain.networkId 1337 --server.host 0.0.0.0 --server.port 8545 &\n\
 GANACHE_PID=$!\n\
 \n\
 echo "Waiting for Ganache to start..."\n\
@@ -62,7 +61,7 @@ fi\n\
 \n\
 echo "Starting mitmproxy..."\n\
 mkdir -p /results/$API/$TOOL/$RUN/logs\n\
-mitmdump -p 9090 --set confdir=/results/$API/$TOOL/$RUN --mode reverse:http://localhost:8080/ -s /infrastructure/mitmproxy/store-interactions.py -s /api/auth.py > /results/$API/$TOOL/$RUN/logs/mitmproxy.log 2>&1 &\n\
+mitmdump -p 9090 --mode reverse:http://localhost:8080/ -s /infrastructure/mitmproxy/store-interactions.py -s /api/auth.py &\n\
 MITM_PID=$!\n\
 \n\
 echo "All services started. Waiting for API process..."\n\
