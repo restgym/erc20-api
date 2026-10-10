@@ -1,0 +1,21 @@
+# RESTgym API manifest
+manifest_version: 1
+
+id: erc20
+name: ERC-20 REST Service
+version: "0.1.0"                  # erc20-rest-service-0.1.0.jar
+description: ERC-20 token standard RESTful service using Spring Boot and web3j.
+domain: blockchain
+# license:                        # not declared in the upstream repository
+repository: https://github.com/web3labs/erc20-rest-service    # also included in https://github.com/WebFuzzing/Dataset
+technology:
+  language: java
+  framework: Spring Boot          # 2.1.7
+  database: Ganache               # local Ethereum blockchain running in the container
+
+authentication: proxy
+
+server_errors:
+  similarity_threshold: 0.8
+  preprocessing:
+    - json_fields: {fields: [message]}
