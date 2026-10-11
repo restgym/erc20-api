@@ -28,44 +28,7 @@ COPY ./infrastructure/ /infrastructure/
 
 EXPOSE 9090 12345 8080 8545
 
-# Create startup script
-RUN echo '#!/bin/bash\n\
-set -e\n\
-mkdir -p /results/$API/$TOOL/$RUN/code-coverage\n\
-\n\
-echo "Starting Ganache..."\n\
-ganache --wallet.deterministic --wallet.totalAccounts 10 --wallet.defaultBalance 100 --chain.networkId 1337 --server.host 0.0.0.0 --server.port 8545 &\n\
-GANACHE_PID=$!\n\
-\n\
-echo "Waiting for Ganache to start..."\n\
-sleep 20\n\
-\n\
-echo "Starting JaCoCo coverage collector..."\n\
-sh /infrastructure/jacoco/collect-coverage-interval.sh &\n\
-JACOCO_PID=$!\n\
-\n\
-echo "Starting ERC20 REST API..."\n\
-java -javaagent:/infrastructure/jacoco/org.jacoco.agent-0.8.7-runtime.jar=includes=*,output=tcpserver,port=12345,address=* -Dfile.encoding=UTF-8 -Dserver.port=8080 -DnodeEndpoint=http://localhost:8545 -DfromAddress=0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1 -jar /api/app.jar > /results/$API/$TOOL/$RUN/logs/erc20-stdout.log 2>&1 &\n\
-API_PID=$!\n\
-\n\
-echo "Waiting for ERC20 API to start and deploying test contract..."\n\
-sleep 15\n\
-python3 /api/init-contract.py\n\
-CONTRACT_RESULT=$?\n\
-\n\
-if [ $CONTRACT_RESULT -eq 0 ]; then\n\
-  echo "Test contract deployed successfully"\n\
-else\n\
-  echo "Warning: Test contract deployment failed, tests may have limited coverage"\n\
-fi\n\
-\n\
-echo "Starting mitmproxy..."\n\
-mkdir -p /results/$API/$TOOL/$RUN/logs\n\
-mitmdump -p 9090 --mode reverse:http://localhost:8080/ -s /infrastructure/mitmproxy/store-interactions.py -s /api/auth.py &\n\
-MITM_PID=$!\n\
-\n\
-echo "All services started. Waiting for API process..."\n\
-wait $API_PID\n\
-' > /start.sh && chmod +x /start.sh
+# Startup script: starts the API, the collection of code coverage and the proxy (see infrastructure/api/restgym-api.sh)
+COPY ./apis/erc20/entrypoint.sh /entrypoint.sh
 
-CMD ["/bin/bash", "/start.sh"]
+ENTRYPOINT ["bash", "/entrypoint.sh"]
