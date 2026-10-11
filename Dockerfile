@@ -1,9 +1,5 @@
 FROM ubuntu:22.04
 
-ENV API=erc20
-ENV TOOL=${TOOL:-manual}
-ENV RUN=${RUN:-1}
-
 RUN mkdir /api && \
     mkdir /infrastructure && \
     mkdir /results && \
