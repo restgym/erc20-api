@@ -1,6 +1,6 @@
 # ERC-20 REST service
 # Base image: Ubuntu 22.04, Java 17 (headless JRE), mitmproxy and the RESTgym infrastructure (see infrastructure/api/Dockerfile)
-FROM restgym-api-base:java17
+FROM restgym/api-base:java17
 
 # Ganache (a local Ethereum blockchain), with Node.js 18 from the repository of NodeSource
 RUN apt-get update \
