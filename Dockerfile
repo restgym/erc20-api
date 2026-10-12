@@ -1,30 +1,17 @@
-FROM ubuntu:22.04
+# ERC-20 REST service
+# Base image: Ubuntu 22.04, Java 17 (headless JRE), mitmproxy and the RESTgym infrastructure (see infrastructure/api/Dockerfile)
+FROM restgym-api-base:java17
 
-RUN mkdir /api && \
-    mkdir /infrastructure && \
-    mkdir /results && \
-    apt update && \
-    apt -y upgrade && \
-    apt -y install openjdk-17-jdk python3 python3-pip curl && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt -y install nodejs && \
-    apt -y autoremove && \
-    pip3 install mitmproxy requests && \
-    npm install -g ganache@7.9.1
+# Ganache (a local Ethereum blockchain), with Node.js 18 from the repository of NodeSource
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g ganache@7.9.1 \
+    && rm -rf /var/lib/apt/lists/* /root/.npm
 
-COPY ./apis/erc20/erc20-rest-service-0.1.0.jar /api/app.jar
-COPY ./apis/erc20/classes/ /api/classes/
-COPY ./apis/erc20/init-contract.py /api/init-contract.py
-COPY ./apis/erc20/auth.py /api/auth.py
+# The API: its executable, the classes for code coverage, its specifications and scripts
+COPY ./apis/erc20/ /api/
 
-# Copy OpenAPI specifications for test generation
-COPY ./apis/erc20/specifications/ /api/specifications/
-
-COPY ./infrastructure/ /infrastructure/
-
-EXPOSE 9090 12345 8080 8545
-
-# Startup script: starts the API, the collection of code coverage and the proxy (see infrastructure/api/restgym-api.sh)
-COPY ./apis/erc20/entrypoint.sh /entrypoint.sh
-
-ENTRYPOINT ["bash", "/entrypoint.sh"]
+# Startup script (in /api): starts the API, the collection of code coverage and the proxy (see infrastructure/api/restgym-api.sh)
+ENTRYPOINT ["bash", "/api/entrypoint.sh"]

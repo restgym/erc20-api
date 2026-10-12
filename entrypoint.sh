@@ -20,9 +20,9 @@ restgym_on_api_ready() {
 }
 
 restgym_run_api 8080 \
-    java -javaagent:/infrastructure/jacoco/org.jacoco.agent-0.8.7-runtime.jar=includes=*,output=tcpserver,port=12345,address=* \
+    java -javaagent:/infrastructure/jacoco/org.jacoco.agent-0.8.12-runtime.jar=includes=*,output=tcpserver,port=12345,address=* \
         -Dfile.encoding=UTF-8 \
         -Dserver.port=8080 \
         -DnodeEndpoint=http://localhost:8545 \
         -DfromAddress=0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1 \
-        -jar /api/app.jar
+        -jar /api/erc20-rest-service-0.1.0.jar
