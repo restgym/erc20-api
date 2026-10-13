@@ -21,7 +21,7 @@ original_specification:           # Swagger 2.0, served by the API at /v2/api-do
   file: swagger-original.json
   source: "runtime: /v2/api-docs"
 
-authentication: proxy
+authentication: none              # the proxy script (rewrite-contract-address.py) rewrites contract addresses, it does not authenticate
 
 server_errors:
   similarity_threshold: 0.8

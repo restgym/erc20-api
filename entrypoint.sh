@@ -3,20 +3,19 @@
 
 source /infrastructure/api/restgym-api.sh
 
-RESTGYM_PROXY_SCRIPTS=(/api/auth.py)
+# Proxy script: replaces the valid addresses of unknown contracts in the requests with that of the test contract (see the README)
+RESTGYM_PROXY_SCRIPTS=(/api/rewrite-contract-address.py)
 
 # Ganache, a local Ethereum blockchain
 restgym_start_service Ganache ganache --wallet.deterministic --wallet.totalAccounts 10 --wallet.defaultBalance 100 \
     --chain.networkId 1337 --server.host 0.0.0.0 --server.port 8545
 restgym_wait_for_port Ganache 8545
 
-# Deploy a test contract through the API, before tools can reach it
+# Deploy a test contract through the API, before tools can reach it. Without it, the operations on contracts would only
+# fail: the container stops (a startup failure), and RESTgym runs the run again
 restgym_on_api_ready() {
-    if python3 /api/init-contract.py; then
-        restgym_log "Test contract deployed."
-    else
-        restgym_log "WARNING: the deployment of the test contract failed: tests may have limited coverage."
-    fi
+    python3 /api/init-contract.py || restgym_fail "The deployment of the test contract failed."
+    restgym_log "Test contract deployed."
 }
 
 restgym_run_api 8080 \
