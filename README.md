@@ -27,8 +27,10 @@ More details (e.g., how 5XX responses are grouped into unique failures) are in t
 | `erc20-rest-service-0.1.0.jar` | The executable of the API. |
 | `classes/` | The classes measured for code coverage: the classes of the packages of the API, as in the executable. |
 | `specifications/erc20-openapi.json` | The specification given to the tools (OpenAPI 3.0.1). |
-| `specifications/erc20.yaml` | The specification given to the tools (OpenAPI 3.0.1). |
-| `specifications/swagger-original.json` | The original specification (Swagger 2.0), as served by the API at `/v2/api-docs`, unchanged. |
+| `specifications/erc20-openapi.yaml` | The specification given to the tools (OpenAPI 3.0.1). |
+| `specifications/erc20-swagger.json` | The specification given to the tools (Swagger 2.0, JSON): not provided yet, the file contains only `TO BE PROVIDED`. |
+| `specifications/erc20-swagger.yaml` | The specification given to the tools (Swagger 2.0, YAML): not provided yet, the file contains only `TO BE PROVIDED`. |
+| `specifications/original/erc20-swagger.json` | The original specification (Swagger 2.0), as served by the API at `/v2/api-docs`, unchanged. |
 | `Dockerfile` | The Docker image of the API, built by RESTgym (`./restgym.sh b`). |
 | `entrypoint.sh` | Starts the API (and the services it needs) in the container. |
 | `rewrite-contract-address.py` | Script of the proxy of RESTgym, which replaces the valid addresses of unknown contracts in the requests with that of the test contract (see below). |
@@ -47,7 +49,7 @@ None.
 
 ### Specification
 
-The original specification is `swagger-original.json` (Swagger 2.0): the specification that the API serves at `/v2/api-docs` (springfox 2.7.0), saved unchanged from the API running in its RESTgym container (2026-10-13). `erc20-openapi.json` and `erc20.yaml`, given to the tools, have the same content (OpenAPI 3.0.1, in JSON and YAML). Besides the conversion to OpenAPI 3.0.1, they differ from the original in:
+The original specification is `original/erc20-swagger.json` (Swagger 2.0): the specification that the API serves at `/v2/api-docs` (springfox 2.7.0), saved unchanged from the API running in its RESTgym container (2026-10). `erc20-openapi.json` and `erc20-openapi.yaml`, given to the tools, have the same content (OpenAPI 3.0.1, in JSON and YAML). Besides the conversion to OpenAPI 3.0.1, they differ from the original in:
 
 - **Request bodies completed.** `ApproveAndCallRequest` declares `spender`, `value` and `extraData` (it has no properties in the original), and `TransferFromRequest` declares `value` (only `from` and `to` in the original). springfox leaves them out because their getters are not public, but the API reads them: the specifications given to the tools describe the requests that the API accepts.
 - **Formats added** to `ContractSpecification`: `int32` for `decimalUnits` and `int64` for `initialAmount`.
@@ -80,7 +82,7 @@ Consequences:
 
 ## Endpoints that may interfere with authentication
 
-RESTgym handles the authentication of the requests, and the tools are not aware of it: an endpoint that ends or changes the session of RESTgym (e.g., logout, login as another user, change or deletion of the user of the proxy, of its password or of its roles) may make the tools fail for the rest of the run. Such endpoints may be removed from the specifications given to the tools.
+RESTgym handles the authentication of the requests, and the tools are not aware of it: an endpoint that ends or changes the session of RESTgym (e.g., logout, login as another user, change or deletion of the user of the proxy, of its password or of its roles) may make the tools fail for the rest of the run. The proxy blocks the requests that would end its session (`471 Blocked by RESTgym`), instead of removing the endpoints from the specifications given to the tools.
 
 None: RESTgym does not authenticate the requests to this API (it needs no authentication: `rewrite-contract-address.py` only rewrites contract addresses), so no endpoint can end or change a session of RESTgym.
 

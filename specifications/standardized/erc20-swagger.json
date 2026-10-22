@@ -1,15 +1,12 @@
 {
-  "openapi": "3.0.1",
+  "swagger": "2.0",
   "info": {
-    "title": "ERC-20 API",
     "description": "ERC-20 token standard RESTful service",
-    "version": "1.0.0"
+    "version": "0.1.0",
+    "title": "ERC-20 API"
   },
-  "servers": [
-    {
-      "url": "http://localhost:8080/"
-    }
-  ],
+  "host": "localhost:8080",
+  "basePath": "/",
   "tags": [
     {
       "name": "controller",
@@ -24,15 +21,17 @@
         ],
         "summary": "Application configuration",
         "operationId": "configUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json;charset=UTF-8"
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NodeConfiguration"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/NodeConfiguration"
             }
           },
           "401": {
@@ -55,37 +54,35 @@
         "summary": "Deploy new ERC-20 token",
         "description": "Returns hex encoded contract address",
         "operationId": "deployUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
+          {
+            "in": "body",
+            "name": "contractSpecification",
+            "description": "contractSpecification",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ContractSpecification"
+            }
+          },
           {
             "name": "privateFor",
             "in": "header",
             "description": "Comma separated list of public keys of enclave nodes that transaction is private for",
             "required": false,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
-        "requestBody": {
-          "description": "contractSpecification",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContractSpecification"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+            "schema": {
+              "type": "string"
             }
           },
           "201": {
@@ -110,44 +107,40 @@
         ],
         "summary": "Get quantity of tokens you can transfer on another token holder's behalf",
         "operationId": "allowanceUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           },
           {
             "name": "ownerAddress",
             "in": "query",
             "description": "ownerAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           },
           {
             "name": "spenderAddress",
             "in": "query",
             "description": "spenderAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+            "schema": {
+              "type": "string"
             }
           },
           "401": {
@@ -170,14 +163,27 @@
         "summary": "Approve transfers by a specific address up to the provided total quantity",
         "description": "Returns hex encoded transaction hash, and Approval event if called",
         "operationId": "approveUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "approveRequest",
+            "description": "approveRequest",
+            "required": true,
             "schema": {
-              "type": "string"
+              "$ref": "#/definitions/ApproveRequest"
             }
           },
           {
@@ -185,31 +191,14 @@
             "in": "header",
             "description": "Comma separated list of public keys of enclave nodes that transaction is private for",
             "required": false,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
-        "requestBody": {
-          "description": "approveRequest",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApproveRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponseApprovalEventResponse"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/TransactionResponse«ApprovalEventResponse»"
             }
           },
           "201": {
@@ -235,14 +224,27 @@
         "summary": "Approve transfers by a specific contract address up to the provided total quantity, and notify that contract address of the approval",
         "description": "Returns hex encoded transaction hash, and Approval event if called",
         "operationId": "approveAndCallUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "approveAndCallRequest",
+            "description": "approveAndCallRequest",
+            "required": true,
             "schema": {
-              "type": "string"
+              "$ref": "#/definitions/ApproveAndCallRequest"
             }
           },
           {
@@ -250,31 +252,14 @@
             "in": "header",
             "description": "Comma separated list of public keys of enclave nodes that transaction is private for",
             "required": false,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
-        "requestBody": {
-          "description": "approveAndCallRequest",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApproveAndCallRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponseApprovalEventResponse"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/TransactionResponse«ApprovalEventResponse»"
             }
           },
           "201": {
@@ -299,35 +284,33 @@
         ],
         "summary": "Get token balance for address",
         "operationId": "balanceOfUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           },
           {
             "name": "ownerAddress",
             "in": "path",
             "description": "ownerAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+            "schema": {
+              "type": "string"
             }
           },
           "401": {
@@ -349,26 +332,26 @@
         ],
         "summary": "Get decimal precision of tokens",
         "operationId": "decimalsUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+            "schema": {
+              "type": "string"
             }
           },
           "401": {
@@ -390,26 +373,26 @@
         ],
         "summary": "Get token name",
         "operationId": "nameUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+            "schema": {
+              "type": "string"
             }
           },
           "401": {
@@ -431,26 +414,26 @@
         ],
         "summary": "Get token symbol",
         "operationId": "symbolUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+            "schema": {
+              "type": "string"
             }
           },
           "401": {
@@ -472,26 +455,26 @@
         ],
         "summary": "Get total supply of tokens",
         "operationId": "totalSupplyUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+            "schema": {
+              "type": "string"
             }
           },
           "401": {
@@ -514,14 +497,27 @@
         "summary": "Transfer tokens you own to another address",
         "description": "Returns hex encoded transaction hash, and Transfer event if called",
         "operationId": "transferUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "transferRequest",
+            "description": "transferRequest",
+            "required": true,
             "schema": {
-              "type": "string"
+              "$ref": "#/definitions/TransferRequest"
             }
           },
           {
@@ -529,31 +525,14 @@
             "in": "header",
             "description": "Comma separated list of public keys of enclave nodes that transaction is private for",
             "required": false,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
-        "requestBody": {
-          "description": "transferRequest",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TransferRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponseTransferEventResponse"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/TransactionResponse«TransferEventResponse»"
             }
           },
           "201": {
@@ -579,14 +558,27 @@
         "summary": "Transfer tokens between addresses (must already be approved)",
         "description": "Returns hex encoded transaction hash, and Transfer event if called",
         "operationId": "transferFromUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "transferFromRequest",
+            "description": "transferFromRequest",
+            "required": true,
             "schema": {
-              "type": "string"
+              "$ref": "#/definitions/TransferFromRequest"
             }
           },
           {
@@ -594,31 +586,14 @@
             "in": "header",
             "description": "Comma separated list of public keys of enclave nodes that transaction is private for",
             "required": false,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
-        "requestBody": {
-          "description": "transferFromRequest",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TransferFromRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponseTransferEventResponse"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/TransactionResponse«TransferEventResponse»"
             }
           },
           "201": {
@@ -643,26 +618,26 @@
         ],
         "summary": "Get contract version",
         "operationId": "versionUsingGET",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
         "parameters": [
           {
             "name": "contractAddress",
             "in": "path",
             "description": "contractAddress",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+            "schema": {
+              "type": "string"
             }
           },
           "401": {
@@ -678,145 +653,122 @@
       }
     }
   },
-  "components": {
-    "schemas": {
-      "ApprovalEventResponse": {
-        "type": "object",
-        "properties": {
-          "owner": {
-            "type": "string"
-          },
-          "spender": {
-            "type": "string"
-          },
-          "value": {
-            "type": "integer",
-            "format": "int64"
-          }
+  "definitions": {
+    "ApprovalEventResponse": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "spender": {
+          "type": "string"
+        },
+        "value": {
+          "type": "integer",
+          "format": "int64"
         }
-      },
-      "ApproveAndCallRequest": {
-        "type": "object",
-        "properties": {
-          "spender": {
-            "type": "string"
-          },
-          "value": {
-            "type": "integer"
-          },
-          "extraData": {
-            "type": "string"
-          }
+      }
+    },
+    "ApproveAndCallRequest": {
+      "type": "object"
+    },
+    "ApproveRequest": {
+      "type": "object",
+      "properties": {
+        "spender": {
+          "type": "string"
+        },
+        "value": {
+          "type": "integer"
         }
-      },
-      "ApproveRequest": {
-        "type": "object",
-        "properties": {
-          "spender": {
-            "type": "string"
-          },
-          "value": {
-            "type": "integer"
-          }
+      }
+    },
+    "ContractSpecification": {
+      "type": "object",
+      "properties": {
+        "decimalUnits": {
+          "type": "integer"
+        },
+        "initialAmount": {
+          "type": "integer"
+        },
+        "tokenName": {
+          "type": "string"
+        },
+        "tokenSymbol": {
+          "type": "string"
         }
-      },
-      "ContractSpecification": {
-        "type": "object",
-        "properties": {
-          "decimalUnits": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "initialAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "tokenName": {
-            "type": "string"
-          },
-          "tokenSymbol": {
-            "type": "string"
-          }
+      }
+    },
+    "NodeConfiguration": {
+      "type": "object",
+      "properties": {
+        "fromAddress": {
+          "type": "string"
+        },
+        "nodeEndpoint": {
+          "type": "string"
         }
-      },
-      "NodeConfiguration": {
-        "type": "object",
-        "properties": {
-          "fromAddress": {
-            "type": "string"
-          },
-          "nodeEndpoint": {
-            "type": "string"
-          }
+      }
+    },
+    "TransactionResponse«ApprovalEventResponse»": {
+      "type": "object",
+      "properties": {
+        "event": {
+          "$ref": "#/definitions/ApprovalEventResponse"
+        },
+        "transactionHash": {
+          "type": "string"
         }
-      },
-      "TransactionResponseApprovalEventResponse": {
-        "type": "object",
-        "description": "Transaction response containing approval event details",
-        "properties": {
-          "transactionHash": {
-            "type": "string",
-            "description": "Hex encoded transaction hash"
-          },
-          "event": {
-            "$ref": "#/components/schemas/ApprovalEventResponse"
-          }
+      }
+    },
+    "TransactionResponse«TransferEventResponse»": {
+      "type": "object",
+      "properties": {
+        "event": {
+          "$ref": "#/definitions/TransferEventResponse"
+        },
+        "transactionHash": {
+          "type": "string"
         }
-      },
-      "TransactionResponseTransferEventResponse": {
-        "type": "object",
-        "description": "Transaction response containing transfer event details",
-        "properties": {
-          "transactionHash": {
-            "type": "string",
-            "description": "Hex encoded transaction hash"
-          },
-          "event": {
-            "$ref": "#/components/schemas/TransferEventResponse"
-          }
+      }
+    },
+    "TransferEventResponse": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "value": {
+          "type": "integer",
+          "format": "int64"
         }
-      },
-      "TransferEventResponse": {
-        "type": "object",
-        "properties": {
-          "from": {
-            "type": "string"
-          },
-          "to": {
-            "type": "string"
-          },
-          "value": {
-            "type": "integer",
-            "format": "int64"
-          }
+      }
+    },
+    "TransferFromRequest": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
         }
-      },
-      "TransferFromRequest": {
-        "type": "object",
-        "properties": {
-          "from": {
-            "type": "string"
-          },
-          "to": {
-            "type": "string"
-          },
-          "value": {
-            "type": "integer"
-          }
-        }
-      },
-      "TransferRequest": {
-        "type": "object",
-        "properties": {
-          "to": {
-            "type": "string"
-          },
-          "value": {
-            "type": "integer"
-          }
+      }
+    },
+    "TransferRequest": {
+      "type": "object",
+      "properties": {
+        "to": {
+          "type": "string"
+        },
+        "value": {
+          "type": "integer"
         }
       }
     }
-  },
-  "x-original-swagger-version": "2.0"
+  }
 }

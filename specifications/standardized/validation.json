@@ -1,0 +1,15 @@
+{
+  "validator": {
+    "name": "Swagger Validator (swagger-validator-v2, swagger-parser)",
+    "image": "swaggerapi/swagger-validator-v2:v2.1.9",
+    "endpoint": "POST /validator/debug",
+    "options": "defaults"
+  },
+  "validated_on": "2026-10-17T14:41:35+02:00",
+  "files": {
+    "erc20-swagger.json": {
+      "messages": [],
+      "schemaValidationMessages": []
+    }
+  }
+}

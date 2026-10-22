@@ -18,7 +18,7 @@ original_specification:           # Swagger 2.0, served by the API at /v2/api-do
   format: json
   origin: generated
   created_by: springfox 2.7.0
-  file: swagger-original.json
+  file: original/erc20-swagger.json
   source: "runtime: /v2/api-docs"
 
 authentication: none              # the proxy script (rewrite-contract-address.py) rewrites contract addresses, it does not authenticate
